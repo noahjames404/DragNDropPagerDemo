@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 
 import com.example.dndp.DND.DNDButton;
@@ -45,6 +46,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
         updateViewPager();
+        updatePager();
     }
 
     /**
@@ -79,10 +81,20 @@ public class MainActivity extends AppCompatActivity {
         view_pager_item_list.add(new DNDItem("Didn't",null,Color.parseColor("#7f8c8d"),"17"));
         view_pager_item_list.add(new DNDItem("Kill",null,Color.parseColor("#1abc9c"),"18"));
         view_pager_item_list.add(new DNDItem("Himself",null,Color.parseColor("#1abc9c"),"19"));
-        view_pager_item_list.add(new DNDItem("hello",null,Color.parseColor("#1abc9c"),"20"));
 
+        /**
+         * The DNDItem uses a much complex constructor
+         * cell_heigh_ratio & cell_width_ratio defines the size of the view
+         * x & y are the coordinates of the view from a layout's row_num & col_num, setting the coordinates to -1 will automatically assign a new coordinates.
+         * background_image can be null, if not the background_color is used instead.
+         * page_num is used which page to preview the view.
+         * tag are used in onclick listeners
+         *
+         * note: if both item has the same page_num & coordinates it is possible that they overlap.
+         */
+        view_pager_item_list.add(new DNDItem("hello",1,1,1,1,null,Color.parseColor("#1abc9c"),5,"20"));
+        view_pager_item_list.add(new DNDItem("hello",1,1,1,1,null,Color.parseColor("#1abc9c"),1,"21"));
 
-//        view_pager.setAdapter(null);
         adapter = new FCollectionAdapter(
                 getSupportFragmentManager(),
                 3,3,
@@ -90,6 +102,9 @@ public class MainActivity extends AppCompatActivity {
                 DNDUtils.defaultAutoSwipe(view_pager)
         );
 
+        /**
+         * settings the editable to true, will enable views to be drag & customized
+         */
         adapter.setEditable(true);
 
         /**
@@ -108,6 +123,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         /**
+         * works only if editable is set to false.
          * onClick listener applied to all buttons, to distinguish each view, you can use View.tags.
          * To apply tags on Views set tag value on DNDItem.tag (also available on constructor)
          */
@@ -115,7 +131,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 DNDButton btn = (DNDButton) view;
-                Log.d(TAG, "onClick: " + btn.getTag());
+                Toast.makeText(getApplicationContext(),"clicking tag " + btn.getTag(),Toast.LENGTH_SHORT).show();
             }
         });
         /**
@@ -155,7 +171,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
             }
-        },5000);
+        },20000);
 
     }
 
@@ -191,6 +207,9 @@ public class MainActivity extends AppCompatActivity {
         pager1.render(new IDNDPager.ActionEvent() {
             @Override
             public void onExecute() {
+                /**
+                 * single pages only requires page_num -1
+                 */
                 pager1.addButtonToLayout(rl_item_list,-1);
             }
         });
@@ -205,10 +224,14 @@ public class MainActivity extends AppCompatActivity {
                runOnUiThread(new Runnable() {
                    @Override
                    public void run() {
+                       /**
+                        * when updating the contents ensure that you have cleared the list
+                        */
                        rl_item_list.clear();
                        rl_item_list.add(new DNDItem("UPDATE",null,Color.parseColor("#e67e22"),"11"));
-                       rl_item_list.add(new DNDItem("NEXT PAGEEE",1,1,1,1,null,Color.parseColor("#8e44ad"),1,"12"));
                        pager1.updateButtons(rl_item_list,-1);
+
+
                    }
                });
             }
@@ -216,5 +239,22 @@ public class MainActivity extends AppCompatActivity {
 
         pager1.setIsEditable(true);
         pager2.setIsEditable(true);
+
+
     }
+
+    /**
+     * extracting values in DNDPagers
+     */
+    public List<DNDItem> extractValues(List<DNDItem> items){
+        for(DNDItem i : items){
+            //updates the values of DNDItems
+            i.validatedProperties();
+        }
+        return items;
+    }
+
+
+
+
 }
