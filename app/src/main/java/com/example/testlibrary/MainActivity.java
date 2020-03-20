@@ -1,12 +1,15 @@
 package com.example.testlibrary;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.viewpager.widget.ViewPager;
 
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
@@ -61,7 +64,7 @@ public class MainActivity extends AppCompatActivity {
         /**
          * create a list of DNDItems
          */
-        view_pager_item_list.add(new DNDItem("Lion",null,Color.parseColor("#e67e22"),"1"));
+        view_pager_item_list.add(new DNDItem("Lion",getResources().getDrawable(R.drawable.sample2),Color.parseColor("#e67e22"),"1"));
         view_pager_item_list.add(new DNDItem("Wolf",null,Color.parseColor("#8e44ad"),"2"));
         view_pager_item_list.add(new DNDItem("Monkey",null,Color.parseColor("#e74c3c"),"3"));
         view_pager_item_list.add(new DNDItem("Wow",null,Color.parseColor("#95a5a6"),"4"));
@@ -113,12 +116,11 @@ public class MainActivity extends AppCompatActivity {
          */
         adapter.setCustomizeFragment(new IDNDPager.ItemView() {
             @Override
-            public View onCustomize(DNDPager pager1, View view) {
+            public void onCustomize(DNDPager pager1, View view) {
                 DNDButton btn = (DNDButton) view;
                 FCustomizePanel
                         .getInstance(btn)
                         .show(getSupportFragmentManager(),"customize");
-                return null;
             }
         });
 
@@ -183,7 +185,7 @@ public class MainActivity extends AppCompatActivity {
         final RelativeLayout rl_grid1, rl_grid2;
 
         final List<DNDItem> rl_item_list = new ArrayList<>();
-        rl_item_list.add(new DNDItem("POWER",null,Color.parseColor("#e67e22"),"11"));
+        rl_item_list.add(new DNDItem("POWER", ContextCompat.getDrawable(this, R.drawable.sample2),Color.parseColor("#e67e22"),"11"));
         rl_item_list.add(new DNDItem("hello",null,Color.parseColor("#8e44ad"),"12"));
         rl_item_list.add(new DNDItem("hello",null,Color.parseColor("#e74c3c"),"13"));
         rl_item_list.add(new DNDItem("hello",null,Color.parseColor("#95a5a6"),"14"));
@@ -200,7 +202,7 @@ public class MainActivity extends AppCompatActivity {
 
         pager1 = new DNDPager(rl_grid1,4,2,"power_id",getApplicationContext());
         pager2 = new DNDPager(rl_grid2,4,2,"power_id",getApplicationContext());
-        pager1.setBackgroundColor(Color.BLACK);
+        pager1.setBackgroundColor(Color.WHITE);
         pager2.render();
 
 
@@ -210,7 +212,7 @@ public class MainActivity extends AppCompatActivity {
                 /**
                  * single pages only requires page_num -1
                  */
-                pager1.addButtonToLayout(rl_item_list,-1);
+                pager1.addButtonToLayout(rl_item_list);
             }
         });
 
@@ -229,7 +231,7 @@ public class MainActivity extends AppCompatActivity {
                         */
                        rl_item_list.clear();
                        rl_item_list.add(new DNDItem("UPDATE",null,Color.parseColor("#e67e22"),"11"));
-                       pager1.updateButtons(rl_item_list,-1);
+                       pager1.updateButtons(rl_item_list);
 
 
                    }
@@ -242,19 +244,4 @@ public class MainActivity extends AppCompatActivity {
 
 
     }
-
-    /**
-     * extracting values in DNDPagers
-     */
-    public List<DNDItem> extractValues(List<DNDItem> items){
-        for(DNDItem i : items){
-            //updates the values of DNDItems
-            i.validatedProperties();
-        }
-        return items;
-    }
-
-
-
-
 }
